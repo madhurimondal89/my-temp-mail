@@ -1302,22 +1302,49 @@
   }
 
   // ==========================================================================
-  // Clipboard Copy Helper
+  // Clipboard Copy Helper (Task 12: Robust navigator.clipboard + execCommand fallback)
   // ==========================================================================
   async function copyToClipboard(text, successMsg = 'Copied to clipboard!') {
-    try {
-      await navigator.clipboard.writeText(text);
+    if (!text) return false;
+    let copied = false;
+
+    // Strategy 1: Asynchronous Clipboard API
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        copied = true;
+      } catch (err) {
+        // Fallback to strategy 2 below
+      }
+    }
+
+    // Strategy 2: Offscreen textarea + document.execCommand fallback
+    if (!copied) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-9999px';
+        ta.style.left = '-9999px';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, 99999);
+        copied = document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch (err) {
+        copied = false;
+      }
+    }
+
+    if (copied) {
       showToast(successMsg, 'success');
       return true;
-    } catch (err) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      ta.remove();
-      showToast(successMsg, 'success');
-      return true;
+    } else {
+      showToast('Could not copy automatically. Please copy manually.', 'warning');
+      return false;
     }
   }
 
@@ -1325,7 +1352,7 @@
     if (!btnElement) return;
     const rect = btnElement.getBoundingClientRect();
     const count = 28;
-    const colors = ['#8B5CF6', '#EC4899', '#6366F1', '#10B981', '#F59E0B', '#FFFFFF'];
+    const colors = ['#00f2fe', '#00d2ff', '#0066ff', '#38bdf8', '#10B981', '#FFFFFF'];
 
     for (let i = 0; i < count; i++) {
       const p = document.createElement('div');

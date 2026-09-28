@@ -2,10 +2,12 @@ const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
-const url = require('url');
+const { URL } = require('url');
 
-const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = __dirname;
+// Exactly ONE single PORT and HOST declaration (Task 2)
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
+const PUBLIC_DIR = path.resolve(__dirname);
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -35,37 +37,90 @@ function handleRequest(req, res) {
     return;
   }
 
-  const parsedUrl = url.parse(req.url, true);
+  let parsedUrl;
+  try {
+    parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  } catch (err) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Malformed request URL' }));
+    return;
+  }
 
-  // --- Transparent API Proxy to bypass Browser CORS ---
+  // --- Health Check Endpoint (Task 5) ---
+  if (parsedUrl.pathname === '/health') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
+    });
+    res.end(JSON.stringify({ status: 'ok' }));
+    return;
+  }
+
+  // --- Favicon Handling (Task 9) ---
+  if (parsedUrl.pathname === '/favicon.ico') {
+    const icoPath = path.join(PUBLIC_DIR, 'favicon.ico');
+    if (fs.existsSync(icoPath)) {
+      res.writeHead(200, { 'Content-Type': 'image/x-icon' });
+      fs.createReadStream(icoPath).pipe(res);
+      return;
+    }
+    const svgPath = path.join(PUBLIC_DIR, 'favicon.svg');
+    if (fs.existsSync(svgPath)) {
+      res.writeHead(200, { 'Content-Type': 'image/svg+xml' });
+      fs.createReadStream(svgPath).pipe(res);
+      return;
+    }
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  // --- Transparent API Proxy to bypass Browser CORS (Tasks 8, 10, 13) ---
   if (parsedUrl.pathname === '/proxy') {
-    const targetUrlStr = parsedUrl.query.url;
+    const targetUrlStr = parsedUrl.searchParams.get('url');
     if (!targetUrlStr) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Missing url parameter');
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Missing url parameter' }));
       return;
     }
 
     try {
-      const targetParsed = url.parse(targetUrlStr);
+      const targetParsed = new URL(targetUrlStr);
+      if (targetParsed.protocol !== 'http:' && targetParsed.protocol !== 'https:') {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Only HTTP and HTTPS protocols are supported' }));
+        return;
+      }
+
+      // SSRF protection: block loopback and cloud metadata
+      const hostnameLower = (targetParsed.hostname || '').toLowerCase();
+      if (['localhost', '127.0.0.1', '0.0.0.0', '::1', '169.254.169.254'].includes(hostnameLower)) {
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Forbidden target host' }));
+        return;
+      }
+
       const isHttps = targetParsed.protocol === 'https:';
       const client = isHttps ? https : http;
 
       const proxyHeaders = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
         'Accept': req.headers['accept'] || 'application/json'
       };
 
       if (req.headers['authorization']) proxyHeaders['Authorization'] = req.headers['authorization'];
       if (req.headers['content-type']) proxyHeaders['Content-Type'] = req.headers['content-type'];
 
+      const targetPath = targetParsed.pathname + targetParsed.search;
+
       const proxyReq = client.request({
         protocol: targetParsed.protocol,
         hostname: targetParsed.hostname,
         port: targetParsed.port || (isHttps ? 443 : 80),
-        path: targetParsed.path,
+        path: targetPath,
         method: req.method,
-        headers: proxyHeaders
+        headers: proxyHeaders,
+        timeout: 12000 // 12 second timeout
       }, (proxyRes) => {
         res.writeHead(proxyRes.statusCode, {
           'Content-Type': proxyRes.headers['content-type'] || 'application/json',
@@ -74,76 +129,109 @@ function handleRequest(req, res) {
         proxyRes.pipe(res);
       });
 
+      proxyReq.on('timeout', () => {
+        proxyReq.destroy(new Error('Proxy request timed out'));
+      });
+
       proxyReq.on('error', (err) => {
-        console.error('Proxy request error:', err.message);
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Proxy Gateway Error', message: err.message }));
+        if (!res.headersSent) {
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Proxy Gateway Error', message: err.message }));
+        }
       });
 
       req.pipe(proxyReq);
       return;
     } catch (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end(`Proxy exception: ${err.message}`);
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Proxy Exception', message: err.message }));
+      }
       return;
     }
   }
 
-  // --- Static Files Serving ---
+  // --- Static Files Serving (Task 9 & Task 13) ---
   let reqPath = decodeURI(parsedUrl.pathname);
   if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
   }
 
-  const filePath = path.join(PUBLIC_DIR, reqPath);
+  const safeReqPath = path.normalize(reqPath).replace(/^(\.\.[\/\\])+/, '');
+  const filePath = path.join(PUBLIC_DIR, safeReqPath);
+  const resolvedPath = path.resolve(filePath);
 
   // Security: prevent directory traversal outside PUBLIC_DIR
-  if (!filePath.startsWith(PUBLIC_DIR)) {
+  if (!resolvedPath.startsWith(PUBLIC_DIR)) {
     res.writeHead(403, { 'Content-Type': 'text/plain' });
     res.end('403 Forbidden');
     return;
   }
 
-  fs.stat(filePath, (err, stats) => {
+  fs.stat(resolvedPath, (err, stats) => {
     if (err || !stats.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
       res.end('404 Not Found');
       return;
     }
 
-    const ext = path.extname(filePath).toLowerCase();
+    const ext = path.extname(resolvedPath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
     res.writeHead(200, {
       'Content-Type': contentType,
-      'Cache-Control': 'no-cache'
+      'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=3600'
     });
 
-    const stream = fs.createReadStream(filePath);
+    const stream = fs.createReadStream(resolvedPath);
+    stream.on('error', (streamErr) => {
+      if (!res.headersSent) {
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('500 Internal Server Error');
+      }
+    });
     stream.pipe(res);
   });
 }
 
+// Exactly ONE application server listener (Task 2 & Task 3)
 const server = http.createServer(handleRequest);
-const PORT = parseInt(process.env.PORT, 10) || 3000;
-const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n🚀 MyTempMails server running with Built-in Proxy at: http://${HOST}:${PORT}`);
-  console.log(`Press Ctrl+C to stop.\n`);
+  // Startup Diagnostics (Task 6)
+  console.log('==================================================');
+  console.log('MyTempMails starting...');
+  console.log(`Node.js version : ${process.version}`);
+  console.log(`Environment     : ${process.env.NODE_ENV || 'production'}`);
+  console.log(`Listening on    : ${HOST}:${PORT}`);
+  console.log(`Server URL      : http://${HOST}:${PORT}`);
+  console.log(`Health endpoint : http://${HOST}:${PORT}/health`);
+  console.log('==================================================');
 });
 
-// Also listen on Port 80 for reverse proxies (like Coolify Traefik default)
-if (PORT !== 80) {
-  try {
-    const server80 = http.createServer(handleRequest);
-    server80.listen(80, HOST, () => {
-      console.log(`🚀 Also listening on port 80 (http://${HOST}:80) for reverse proxy\n`);
-    });
-    server80.on('error', (err) => {
-      console.log(`Notice: Port 80 listener (${err.message})`);
-    });
-  } catch (err) {
-    console.log(`Port 80 catch: ${err.message}`);
-  }
+// Graceful Shutdown (Task 7)
+let isShuttingDown = false;
+
+function gracefulShutdown(signal) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.log(`\nReceived ${signal}. Gracefully shutting down MyTempMails server...`);
+
+  server.close((err) => {
+    if (err) {
+      console.error('Error during server close:', err);
+      process.exit(1);
+    }
+    console.log('HTTP server closed cleanly. Exiting.');
+    process.exit(0);
+  });
+
+  // Force shutdown after 5 seconds if connections linger
+  setTimeout(() => {
+    console.error('Forced shutdown due to timeout.');
+    process.exit(1);
+  }, 5000).unref();
 }
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

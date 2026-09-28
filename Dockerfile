@@ -4,14 +4,14 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --production
+RUN npm install --omit=dev
 
 COPY . .
 
-EXPOSE 3000
-EXPOSE 80
-
+ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOST=0.0.0.0
+
+EXPOSE 3000
 
 CMD ["node", "server.js"]
