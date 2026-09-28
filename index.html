@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
+  <title>MyTempMails – Free, Fast &amp; Secure Temporary Disposable Inbox</title>
+  <meta name="title" content="MyTempMails – Free, Fast & Secure Temporary Disposable Inbox">
+  <meta name="description" content="Generate instant, anonymous temporary disposable email addresses with live real-time inbox, auto-refresh, QR code access, and privacy protection.">
+  <meta name="keywords" content="temp mail, temporary email, disposable email, 10 minute mail, fake email generator, spam protection">
+  <meta name="author" content="MyTempMails">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mytempmails.com/">
+  <meta property="og:title" content="MyTempMails – Free Disposable Temporary Email Generator">
+  <meta property="og:description" content="Instant 10-minute temporary email address. Protect your personal inbox from spam, bots, and unwanted newsletters.">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Remix Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Ambient Animated Lighting Effects -->
+  <div class="bg-ambient" aria-hidden="true">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+    <div class="glow-orb-3"></div>
+  </div>
+
+  <div class="app-container">
+
+    <!-- Header Navigation -->
+    <header class="site-header">
+      <a href="#" class="brand-wrapper" id="brand-logo" aria-label="MyTempMails Home">
+        <div class="brand-icon">
+          <i class="ri-mail-lock-line"></i>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">
+            MyTempMails <span class="brand-badge">PRO</span>
+          </div>
+          <span class="brand-subtitle">Instant Disposable Mailbox</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <!-- Multi-Provider Selector -->
+        <div class="provider-selector-wrap" title="Switch Temporary Mail Engine / Provider">
+          <i class="ri-server-line"></i>
+          <select id="provider-select" class="provider-select" aria-label="Select Mail Provider">
+            <option value="mailtm">🚀 Mail.tm</option>
+            <option value="guerrilla">🛡️ Guerrilla Mail</option>
+            <option value="smails">🤖 smails.dev (Fast REST)</option>
+            <option value="temptf">🎓 temp.tf (.edu.pl / Pro)</option>
+            <option value="tempmailio">⚡ Temp-Mail.io</option>
+            <option value="inboxes">📨 Inboxes (GetNada)</option>
+            <option value="simulation">🧪 Offline Demo</option>
+          </select>
+        </div>
+
+        <!-- Live Connection Status -->
+        <div class="status-pill" id="network-status-indicator" title="Connected to Mail Network">
+          <span class="status-dot"></span>
+          <span id="network-status-text">Live Sync</span>
+        </div>
+
+        <!-- Audio Mute/Unmute Toggle -->
+        <button class="icon-button" id="btn-toggle-sound" title="Toggle audio notification" aria-label="Toggle Sound">
+          <i class="ri-volume-up-line" id="sound-icon"></i>
+        </button>
+
+        <!-- Saved Inboxes History -->
+        <button class="icon-button" id="btn-open-history" title="View Recent Inboxes" aria-label="Inbox History">
+          <i class="ri-history-line"></i>
+        </button>
+
+        <!-- Dark / Light Theme Toggle -->
+        <button class="icon-button" id="btn-theme-toggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+          <i class="ri-moon-clear-line" id="theme-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+
+      <!-- Hero & Command Center -->
+      <section class="hero-section">
+        <div class="hero-tag">
+          <i class="ri-shield-check-line"></i> 100% Anonymous &bull; No Logs &bull; Zero Spam
+          <span class="provider-badge-indicator" id="hero-provider-badge"><i class="ri-server-fill"></i> Engine: Mail.tm</span>
+        </div>
+        <h1 class="hero-title">
+          Your Secure <span>Temporary Inbox</span>
+        </h1>
+        <p class="hero-desc">
+          Receive verification codes, test apps, and protect your identity with disposable email addresses that auto-refresh in real time.
+        </p>
+
+        <!-- Generator Command Card -->
+        <div class="mail-generator-card">
+
+          <!-- Email Address Display Box -->
+          <div class="email-box-wrapper">
+            <div class="email-display-container" id="email-box-container">
+              <div class="email-left-info">
+                <i class="ri-at-line email-lead-icon"></i>
+                <div class="email-address-text" id="email-address-text">
+                  <span class="email-loading-state">
+                    <i class="ri-loader-4-line ri-spin"></i> Generating secure address...
+                  </span>
+                </div>
+              </div>
+              <button class="btn-inline-copy" id="btn-copy-email" title="Click to copy address" aria-label="Copy Email Address">
+                <i class="ri-file-copy-line"></i>
+                <span id="copy-btn-text">Copy Address</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Timer and Meta Bar -->
+          <div class="meta-status-bar">
+            <div class="timer-group">
+              <div class="timer-badge" id="timer-badge" title="Time remaining before mailbox resets">
+                <i class="ri-timer-line"></i>
+                <span id="timer-countdown">10:00</span>
+              </div>
+              <div class="timer-progress-track" title="Email lifespan progress">
+                <div class="timer-progress-fill" id="timer-progress-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+
+            <div class="timer-actions">
+              <button class="btn-timer-extend" id="btn-extend-timer" title="Add 10 more minutes to this mailbox">
+                <i class="ri-add-line"></i> +10 Min
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Toolbar Buttons -->
+          <div class="actions-toolbar">
+            <!-- Refresh -->
+            <button class="action-btn btn-sync" id="btn-refresh-mail" title="Check for new incoming emails">
+              <i class="ri-refresh-line"></i>
+              <span>Check Mail</span>
+            </button>
+
+            <!-- New Email -->
+            <button class="action-btn" id="btn-new-email" title="Generate a brand new email address">
+              <i class="ri-shuffle-line"></i>
+              <span>Change Address</span>
+            </button>
+
+            <!-- Custom Email -->
+            <button class="action-btn" id="btn-custom-email" title="Choose your custom address handle">
+              <i class="ri-edit-line"></i>
+              <span>Custom Handle</span>
+            </button>
+
+            <!-- QR Code -->
+            <button class="action-btn" id="btn-show-qr" title="Scan QR Code to open on mobile">
+              <i class="ri-qr-code-line"></i>
+              <span>Mobile QR</span>
+            </button>
+
+            <!-- Delete -->
+            <button class="action-btn btn-danger" id="btn-delete-email" title="Wipe current mailbox and start over">
+              <i class="ri-delete-bin-line"></i>
+              <span>Delete Inbox</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Trust & Performance Ticker Strip -->
+        <div class="stats-ticker-strip">
+          <div class="ticker-item"><i class="ri-flashlight-line"></i> <span>0.2s Delivery</span></div>
+          <div class="ticker-dot">&bull;</div>
+          <div class="ticker-item"><i class="ri-shield-keyhole-line"></i> <span>Zero Logs Kept</span></div>
+          <div class="ticker-dot">&bull;</div>
+          <div class="ticker-item"><i class="ri-server-line"></i> <span>4 Cloud Engines</span></div>
+          <div class="ticker-dot">&bull;</div>
+          <div class="ticker-item"><i class="ri-lock-password-line"></i> <span>Encrypted Session</span></div>
+        </div>
+      </section>
+
+      <!-- Real-Time Inbox Section -->
+      <section class="inbox-section" id="inbox-section">
+        <div class="inbox-card-wrapper">
+          
+          <!-- Top Bar -->
+          <div class="inbox-topbar">
+            <div class="inbox-title-group">
+              <i class="ri-inbox-archive-line" style="color: var(--primary); font-size: 1.35rem;"></i>
+              <h2>Live Inbox</h2>
+              <span class="inbox-counter" id="inbox-counter">0 messages</span>
+            </div>
+
+            <div class="inbox-status-info">
+              <button class="btn-send-test" id="btn-send-test-email" title="Simulate an instant incoming test email">
+                <i class="ri-send-plane-fill"></i> Send Test Email
+              </button>
+              <div class="auto-poll-indicator" title="Auto-polling active every 5s">
+                <span class="radar-signal"></span>
+                <span id="auto-poll-label">Auto-syncing</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Split View (Messages List + Reader) -->
+          <div class="inbox-split-view" id="inbox-split-view">
+            
+            <!-- Left Pane: Email List -->
+            <aside class="email-list-pane" id="email-list-pane" aria-label="Messages List">
+              <div class="inbox-empty-state" id="inbox-empty-state">
+                <div class="empty-radar-icon">
+                  <i class="ri-mail-send-line"></i>
+                </div>
+                <h3>Your Inbox is Waiting</h3>
+                <p>Emails sent to your temporary address will appear here instantly with zero delay.</p>
+                <button class="btn-send-test" id="btn-empty-send-test">
+                  <i class="ri-magic-line"></i> Send Demo Verification Email
+                </button>
+              </div>
+
+              <!-- Message list items inserted by JS -->
+              <div id="messages-list-wrapper"></div>
+            </aside>
+
+            <!-- Right Pane: Email Detail Viewer -->
+            <article class="email-detail-pane" id="email-detail-pane" aria-label="Email Reader">
+              
+              <!-- Placeholder when no email is selected -->
+              <div class="detail-placeholder" id="detail-placeholder">
+                <i class="ri-mail-open-line"></i>
+                <p>Select an email from the left pane to view its content, headers, and attachments.</p>
+              </div>
+
+              <!-- Active View Container -->
+              <div class="detail-view-container" id="detail-view-container" style="display: none;">
+                
+                <!-- Detail Header -->
+                <div class="detail-header-card">
+                  <button class="btn-back-to-list" id="btn-back-to-list">
+                    <i class="ri-arrow-left-line"></i> Back to Messages
+                  </button>
+
+                  <h3 class="detail-subject-line" id="detail-subject">Email Subject</h3>
+
+                  <div class="detail-meta-grid">
+                    <div class="detail-sender-info">
+                      <div class="detail-avatar-large" id="detail-avatar">M</div>
+                      <div class="detail-sender-text">
+                        <h4 id="detail-sender-name">Sender Name</h4>
+                        <p id="detail-sender-address">sender@example.com</p>
+                      </div>
+                    </div>
+
+                    <div class="detail-actions-cluster">
+                      <span id="detail-date" style="font-size: 0.8rem; color: var(--text-subtle); margin-right: 0.5rem;">Date</span>
+                      <button class="detail-action-btn" id="btn-print-email" title="Print email">
+                        <i class="ri-printer-line"></i> Print
+                      </button>
+                      <button class="detail-action-btn" id="btn-copy-body" title="Copy email text">
+                        <i class="ri-file-copy-2-line"></i> Copy
+                      </button>
+                      <button class="detail-action-btn delete" id="btn-delete-message" title="Delete this email">
+                        <i class="ri-delete-bin-6-line"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Format Toggle (HTML vs Plain Text) -->
+                <div class="view-format-bar">
+                  <span style="color: var(--text-muted);"><i class="ri-shield-keyhole-line"></i> Sandboxed Message Preview</span>
+                  <div class="format-pills">
+                    <button class="format-pill active" id="btn-format-html">Rich HTML</button>
+                    <button class="format-pill" id="btn-format-text">Plain Text</button>
+                  </div>
+                </div>
+
+                <!-- Email Body Area -->
+                <div class="email-body-content">
+                  <!-- Sandboxed Iframe for HTML -->
+                  <iframe class="email-iframe-viewer" id="email-iframe-viewer" sandbox="allow-popups allow-popups-to-escape-sandbox" title="Email Body"></iframe>
+                  
+                  <!-- Plain Text Container -->
+                  <pre class="email-plain-text-viewer" id="email-plain-viewer" style="display: none;"></pre>
+
+                  <!-- Attachments Area -->
+                  <div class="attachments-wrapper" id="detail-attachments-wrapper" style="display: none;">
+                    <div class="attachments-title">
+                      <i class="ri-attachment-2"></i> Attachments
+                    </div>
+                    <div class="attachments-grid" id="detail-attachments-list"></div>
+                  </div>
+                </div>
+
+              </div>
+
+            </article>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Why Use MyTempMails Feature Highlights -->
+      <section class="features-grid-section">
+        <div class="section-headline">
+          <h2>Why Choose <span>MyTempMails</span>?</h2>
+          <p>The fastest, most secure disposable email service engineered for privacy and developer productivity.</p>
+        </div>
+
+        <div class="cards-grid">
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #10B981, #059669);">
+              <i class="ri-shield-flash-line"></i>
+            </div>
+            <h3>100% Free &amp; Anonymous</h3>
+            <p>No registration, no credit cards, and no phone numbers required. Generate unlimited temporary inboxes at the click of a button.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+              <i class="ri-mail-star-line"></i>
+            </div>
+            <h3>Instant Real-Time Inbox</h3>
+            <p>Emails arrive in seconds with live auto-syncing, Web Audio chimes, and instant preview for OTPs and activation links.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #EC4899, #BE185D);">
+              <i class="ri-spam-2-line"></i>
+            </div>
+            <h3>Spam &amp; Tracker Protection</h3>
+            <p>Keep your real personal and work email address clean from advertising junk, marketing spam, and data-broker lists.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+              <i class="ri-smartphone-line"></i>
+            </div>
+            <h3>Mobile QR Code Support</h3>
+            <p>Scan a live QR code on your phone or tablet to open your inbox on any device immediately without re-typing.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #3B82F6, #1D4ED8);">
+              <i class="ri-code-box-line"></i>
+            </div>
+            <h3>Developer &amp; QA Friendly</h3>
+            <p>Test signup workflows, password reset flows, and email notifications reliably with instant simulated and live messages.</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon-badge" style="background: linear-gradient(135deg, #14B8A6, #0F766E);">
+              <i class="ri-timer-flash-line"></i>
+            </div>
+            <h3>Flexible Lifespan Control</h3>
+            <p>Standard 10-minute validity that can be extended indefinitely with a single click, or wiped permanently whenever you wish.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works in 3 Steps -->
+      <section class="how-it-works-section">
+        <div class="section-headline">
+          <h2>How It Works in <span>3 Easy Steps</span></h2>
+          <p>Generate, verify, and stay protected in under 10 seconds.</p>
+        </div>
+
+        <div class="steps-container">
+          <div class="step-card">
+            <span class="step-number">01</span>
+            <h3>Get Your Instant Address</h3>
+            <p>Your temporary email is automatically generated upon landing. Copy it to your clipboard with one click.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number">02</span>
+            <h3>Use It for Signups &amp; Trials</h3>
+            <p>Paste your temporary email into websites, services, downloads, or apps requiring email verification.</p>
+          </div>
+
+          <div class="step-card">
+            <span class="step-number">03</span>
+            <h3>Receive OTPs &amp; Read Messages</h3>
+            <p>Watch incoming emails stream into your live inbox in real time. Read codes and click activation links safely.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Frequently Asked Questions Accordion -->
+      <section class="faq-section">
+        <div class="section-headline">
+          <h2>Frequently Asked <span>Questions</span></h2>
+          <p>Everything you need to know about disposable temporary emails.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item active">
+            <div class="faq-question">
+              <span>What is a temporary disposable email address?</span>
+              <i class="ri-arrow-down-s-line faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+              <p>A temporary email (also known as throwaway email, 10-minute mail, or burner email) allows you to receive emails at a temporary address that self-destructs after a set time. It protects your real inbox from spam, unwanted promos, and identity theft.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Is MyTempMails completely free to use?</span>
+              <i class="ri-arrow-down-s-line faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Yes! MyTempMails is 100% free with no hidden fees, subscriptions, or credit card requirements. You can create as many addresses as you need.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Can I choose my own custom email username?</span>
+              <i class="ri-arrow-down-s-line faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Yes. Click the <strong>Custom Handle</strong> button above to specify your preferred username and create a customized disposable inbox instantly.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Can I receive file attachments in emails?</span>
+              <i class="ri-arrow-down-s-line faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Yes, incoming messages with attachments (PDFs, images, documents) are fully supported and can be downloaded securely right from the email reader.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-question">
+              <span>Can I extend the 10-minute lifespan?</span>
+              <i class="ri-arrow-down-s-line faq-icon"></i>
+            </div>
+            <div class="faq-answer">
+              <p>Absolutely. Click the <strong>+10 Min</strong> button next to the countdown timer anytime to extend the duration of your inbox for as long as you need.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <ul class="footer-links">
+        <li><a href="#inbox-section">Inbox</a></li>
+        <li><a href="https://mytempmails.com/" target="_blank" rel="noopener">MyTempMails Official</a></li>
+        <li><a href="#" id="footer-privacy-link">Privacy Policy</a></li>
+        <li><a href="#" id="footer-terms-link">Terms of Service</a></li>
+      </ul>
+      <p>&copy; 2026 MyTempMails Studio. Built for ultimate privacy, speed, and security.</p>
+    </footer>
+
+  </div>
+
+  <!-- QR Code Modal -->
+  <div class="modal-overlay" id="modal-qr" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="qr-modal-title"><i class="ri-qr-code-line"></i> Mobile Inbox QR</h3>
+        <button class="btn-close-modal" id="btn-close-qr" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem; text-align: center;">
+          Scan with your smartphone camera to quickly access or share this temporary email address.
+        </p>
+        <div class="qr-code-canvas-container" id="qr-code-canvas-container">
+          <!-- QR SVG / Canvas inserted here -->
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.85rem; text-align: center; word-break: break-all; color: var(--primary);" id="qr-email-label"></div>
+      </div>
+      <button class="btn-primary-block" id="btn-copy-from-qr">
+        <i class="ri-file-copy-line"></i> Copy Email Address
+      </button>
+    </div>
+  </div>
+
+  <!-- Custom Handle Modal -->
+  <div class="modal-overlay" id="modal-custom" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="custom-modal-title"><i class="ri-edit-line"></i> Custom Email Handle</h3>
+        <button class="btn-close-modal" id="btn-close-custom" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form class="custom-email-form" id="form-custom-email">
+          <div class="form-group">
+            <label for="custom-username-input">Enter desired username</label>
+            <div class="input-with-addon">
+              <input type="text" id="custom-username-input" placeholder="e.g. dev.tester" required pattern="[a-zA-Z0-9._\-]{3,30}" autocomplete="off">
+              <span class="domain-addon" id="custom-domain-addon">@loading...</span>
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-subtle); margin-top: 0.4rem;">
+              Allowed: Letters, numbers, dots, dashes, and underscores (3-30 chars).
+            </p>
+          </div>
+          <button type="submit" class="btn-primary-block" id="btn-create-custom">
+            Create Custom Inbox
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Inboxes History Modal -->
+  <div class="modal-overlay" id="modal-history" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="history-modal-title"><i class="ri-history-line"></i> Session Inboxes</h3>
+        <button class="btn-close-modal" id="btn-close-history" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Inboxes generated during your current browser session:
+        </p>
+        <div class="inbox-history-list" id="inbox-history-list"></div>
+      </div>
+      <button class="btn-primary-block" style="background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3);" id="btn-clear-history">
+        <i class="ri-delete-bin-line"></i> Clear History
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Main Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>

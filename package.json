@@ -1,0 +1,19 @@
+{
+  "name": "mytempmails",
+  "version": "1.0.0",
+  "description": "Modern, fast, and secure disposable temporary email web application inspired by MyTempMails.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "temp-mail",
+    "disposable-email",
+    "mytempmails",
+    "mail-tm",
+    "privacy"
+  ],
+  "author": "",
+  "license": "MIT"
+}
