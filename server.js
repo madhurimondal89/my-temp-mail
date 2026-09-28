@@ -23,7 +23,7 @@ const MIME_TYPES = {
   '.ttf': 'font/ttf'
 };
 
-const server = http.createServer((req, res) => {
+function handleRequest(req, res) {
   // Global CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -122,11 +122,28 @@ const server = http.createServer((req, res) => {
     const stream = fs.createReadStream(filePath);
     stream.pipe(res);
   });
-});
+}
 
+const server = http.createServer(handleRequest);
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
   console.log(`\n🚀 MyTempMails server running with Built-in Proxy at: http://${HOST}:${PORT}`);
   console.log(`Press Ctrl+C to stop.\n`);
 });
+
+// Also listen on Port 80 for reverse proxies (like Coolify Traefik default)
+if (PORT !== 80) {
+  try {
+    const server80 = http.createServer(handleRequest);
+    server80.listen(80, HOST, () => {
+      console.log(`🚀 Also listening on port 80 (http://${HOST}:80) for reverse proxy\n`);
+    });
+    server80.on('error', (err) => {
+      console.log(`Notice: Port 80 listener (${err.message})`);
+    });
+  } catch (err) {
+    console.log(`Port 80 catch: ${err.message}`);
+  }
+}
