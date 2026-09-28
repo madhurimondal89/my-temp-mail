@@ -1,6 +1,6 @@
 {
   "name": "mytempmails",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Modern, fast, and secure disposable temporary email web application inspired by MyTempMails.",
   "main": "server.js",
   "scripts": {

@@ -1,3 +1,4 @@
+# Release v1.0.1 - Coolify Production
 FROM node:20-alpine
 
 WORKDIR /app
