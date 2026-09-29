@@ -194,7 +194,7 @@ function handleRequest(req, res) {
   });
 }
 
-// Exactly ONE application server listener (Task 2 & Task 3)
+// Application HTTP server listener
 const server = http.createServer(handleRequest);
 
 server.listen(PORT, HOST, () => {
@@ -209,6 +209,23 @@ server.listen(PORT, HOST, () => {
   console.log('==================================================');
 });
 
+// Dual-port listener for reverse proxies (e.g. Coolify / Traefik routing to 80 or 3000)
+let serverAlt = null;
+const ALT_PORT = PORT === 80 ? 3000 : 80;
+
+try {
+  serverAlt = http.createServer(handleRequest);
+  serverAlt.listen(ALT_PORT, HOST, () => {
+    console.log(`🚀 Also listening on reverse proxy port ${ALT_PORT} (http://${HOST}:${ALT_PORT})`);
+  });
+  serverAlt.on('error', (err) => {
+    // If port cannot be bound (e.g. non-root on local dev), log info and continue with primary PORT
+    console.log(`Notice: Alternative port ${ALT_PORT} listener inactive (${err.message}). Primary port ${PORT} active.`);
+  });
+} catch (err) {
+  console.log(`Notice: Could not bind alternative port ${ALT_PORT}: ${err.message}`);
+}
+
 // Graceful Shutdown (Task 7)
 let isShuttingDown = false;
 
@@ -217,14 +234,28 @@ function gracefulShutdown(signal) {
   isShuttingDown = true;
   console.log(`\nReceived ${signal}. Gracefully shutting down MyTempMails server...`);
 
-  server.close((err) => {
-    if (err) {
-      console.error('Error during server close:', err);
-      process.exit(1);
+  let closedCount = 0;
+  const totalServers = serverAlt ? 2 : 1;
+
+  function onClosed() {
+    closedCount++;
+    if (closedCount >= totalServers) {
+      console.log('All HTTP server listeners closed cleanly. Exiting.');
+      process.exit(0);
     }
-    console.log('HTTP server closed cleanly. Exiting.');
-    process.exit(0);
+  }
+
+  server.close((err) => {
+    if (err) console.error('Error closing primary server:', err);
+    onClosed();
   });
+
+  if (serverAlt) {
+    serverAlt.close((err) => {
+      if (err) console.error('Error closing alt server:', err);
+      onClosed();
+    });
+  }
 
   // Force shutdown after 5 seconds if connections linger
   setTimeout(() => {
