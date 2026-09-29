@@ -197,6 +197,10 @@ function handleRequest(req, res) {
 // Application HTTP server listener
 const server = http.createServer(handleRequest);
 
+server.on('error', (err) => {
+  console.error('Primary server error:', err.message);
+});
+
 server.listen(PORT, HOST, () => {
   // Startup Diagnostics (Task 6)
   console.log('==================================================');
@@ -215,15 +219,17 @@ const ALT_PORT = PORT === 80 ? 3000 : 80;
 
 try {
   serverAlt = http.createServer(handleRequest);
+  // Attach error handler BEFORE listen to guarantee no crash if port 80 requires root / is restricted
+  serverAlt.on('error', (err) => {
+    console.log(`Notice: Alternative port ${ALT_PORT} listener inactive (${err.message}). Primary port ${PORT} active.`);
+    serverAlt = null;
+  });
   serverAlt.listen(ALT_PORT, HOST, () => {
     console.log(`🚀 Also listening on reverse proxy port ${ALT_PORT} (http://${HOST}:${ALT_PORT})`);
   });
-  serverAlt.on('error', (err) => {
-    // If port cannot be bound (e.g. non-root on local dev), log info and continue with primary PORT
-    console.log(`Notice: Alternative port ${ALT_PORT} listener inactive (${err.message}). Primary port ${PORT} active.`);
-  });
 } catch (err) {
   console.log(`Notice: Could not bind alternative port ${ALT_PORT}: ${err.message}`);
+  serverAlt = null;
 }
 
 // Graceful Shutdown (Task 7)
