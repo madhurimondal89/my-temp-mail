@@ -1589,6 +1589,21 @@
         closeModal(elements.modalHistory);
       }
     });
+
+    // Web Tools header dropdown click/touch toggle
+    const btnWebTools = document.getElementById('btn-web-tools');
+    const webToolsDropdown = document.getElementById('web-tools-dropdown');
+    if (btnWebTools && webToolsDropdown) {
+      btnWebTools.addEventListener('click', (e) => {
+        e.stopPropagation();
+        webToolsDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!webToolsDropdown.contains(e.target)) {
+          webToolsDropdown.classList.remove('open');
+        }
+      });
+    }
   }
 
   // ==========================================================================
