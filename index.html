@@ -57,6 +57,26 @@
         </div>
       </a>
 
+      <!-- Header Navigation & Dropdown -->
+      <nav class="header-nav" aria-label="Main Navigation">
+        <div class="nav-dropdown" id="nav-home-dropdown">
+          <button class="nav-dropdown-trigger" id="btn-home-dropdown" type="button" aria-haspopup="true" aria-expanded="false">
+            <span>Home</span>
+            <i class="ri-arrow-down-s-line"></i>
+          </button>
+          <div class="nav-dropdown-menu" id="home-dropdown-menu" role="menu">
+            <a href="https://mytempmails.com/about-us/" target="_blank" rel="noopener" role="menuitem"><i class="ri-information-line"></i> About Us</a>
+            <a href="https://mytempmails.com/contact-us/" target="_blank" rel="noopener" role="menuitem"><i class="ri-mail-send-line"></i> Contact Us</a>
+            <a href="https://mytempmails.com/disclaimer/" target="_blank" rel="noopener" role="menuitem"><i class="ri-alert-line"></i> Disclaimer</a>
+            <a href="https://mytempmails.com/dmca-policy/" target="_blank" rel="noopener" role="menuitem"><i class="ri-copyright-line"></i> DMCA Policy</a>
+            <a href="https://mytempmails.com/privacy-policy/" target="_blank" rel="noopener" role="menuitem"><i class="ri-shield-user-line"></i> Privacy Policy</a>
+            <a href="https://mytempmails.com/terms-and-conditions/" target="_blank" rel="noopener" role="menuitem"><i class="ri-file-text-line"></i> Terms and Conditions</a>
+          </div>
+        </div>
+        <a href="#inbox-section" class="header-nav-link">Temp Mail</a>
+        <a href="https://mytempmails.com/" target="_blank" rel="noopener" class="header-nav-link">10 Min Mail</a>
+      </nav>
+
       <div class="header-actions">
         <!-- Multi-Provider Selector -->
         <div class="provider-selector-wrap" title="Switch Temporary Mail Engine / Provider">
@@ -470,13 +490,77 @@
 
     <!-- Footer -->
     <footer class="site-footer">
-      <ul class="footer-links">
-        <li><a href="#inbox-section">Inbox</a></li>
-        <li><a href="https://mytempmails.com/" target="_blank" rel="noopener">MyTempMails Official</a></li>
-        <li><a href="#" id="footer-privacy-link">Privacy Policy</a></li>
-        <li><a href="#" id="footer-terms-link">Terms of Service</a></li>
-      </ul>
-      <p>&copy; 2026 MyTempMails Studio. Built for ultimate privacy, speed, and security.</p>
+      <div class="footer-container">
+        <!-- Col 1: Brand & Bio -->
+        <div class="footer-col footer-brand-col">
+          <a href="#" class="footer-brand" aria-label="MyTempMails Home">
+            <div class="brand-icon">
+              <i class="ri-mail-lock-line"></i>
+            </div>
+            <div class="brand-text">
+              <div class="brand-title">
+                MyTempMails <span class="brand-badge">PRO</span>
+              </div>
+              <span class="brand-subtitle">Instant Disposable Mailbox</span>
+            </div>
+          </a>
+          <p class="footer-description">
+            Fast, secure, and anonymous temporary disposable email service. Protect your personal inbox from spam, advertising mailings, and malicious bots.
+          </p>
+          <div class="footer-badges">
+            <span class="footer-badge"><i class="ri-shield-check-line"></i> 100% Free &amp; Private</span>
+            <span class="footer-badge"><i class="ri-flashlight-line"></i> Instant Inbox</span>
+            <span class="footer-badge"><i class="ri-lock-line"></i> SSL Secured</span>
+          </div>
+        </div>
+
+        <!-- Col 2: Company & Legal (mytempmails.com) -->
+        <div class="footer-col">
+          <h4 class="footer-col-title"><i class="ri-building-line"></i> Company &amp; Legal</h4>
+          <ul class="footer-link-list">
+            <li><a href="https://mytempmails.com/about-us/" target="_blank" rel="noopener"><i class="ri-information-line"></i> About Us</a></li>
+            <li><a href="https://mytempmails.com/contact-us/" target="_blank" rel="noopener"><i class="ri-mail-send-line"></i> Contact Us</a></li>
+            <li><a href="https://mytempmails.com/disclaimer/" target="_blank" rel="noopener"><i class="ri-alert-line"></i> Disclaimer</a></li>
+            <li><a href="https://mytempmails.com/dmca-policy/" target="_blank" rel="noopener"><i class="ri-copyright-line"></i> DMCA Policy</a></li>
+            <li><a href="https://mytempmails.com/privacy-policy/" target="_blank" rel="noopener"><i class="ri-shield-user-line"></i> Privacy Policy</a></li>
+            <li><a href="https://mytempmails.com/terms-and-conditions/" target="_blank" rel="noopener"><i class="ri-file-text-line"></i> Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Calculator Hubs Network -->
+        <div class="footer-col">
+          <h4 class="footer-col-title"><i class="ri-function-line"></i> Calculator Hubs</h4>
+          <ul class="footer-link-list">
+            <li><a href="https://financialhub.calculatorfree.in/" target="_blank" rel="noopener"><i class="ri-money-dollar-circle-line"></i> Financial Hub</a></li>
+            <li><a href="https://health-hub.calculatorfree.in/" target="_blank" rel="noopener"><i class="ri-heart-pulse-line"></i> Health Hub</a></li>
+            <li><a href="https://engineering.calculatorfree.in/" target="_blank" rel="noopener"><i class="ri-tools-line"></i> Engineering Hub</a></li>
+            <li><a href="https://mytempmails.com/" target="_blank" rel="noopener"><i class="ri-global-line"></i> MyTempMails Official</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Quick Navigation -->
+        <div class="footer-col">
+          <h4 class="footer-col-title"><i class="ri-compass-3-line"></i> Quick Links</h4>
+          <ul class="footer-link-list">
+            <li><a href="#inbox-section"><i class="ri-inbox-line"></i> Live Inbox</a></li>
+            <li><a href="#how-it-works"><i class="ri-lightbulb-line"></i> How It Works</a></li>
+            <li><a href="#features-section"><i class="ri-star-line"></i> Core Features</a></li>
+            <li><a href="#faq-section"><i class="ri-question-line"></i> FAQ &amp; Guide</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Footer Bottom Bar -->
+      <div class="footer-bottom">
+        <p class="footer-copyright">&copy; 2026 MyTempMails Studio. Built for ultimate privacy, speed, and security.</p>
+        <div class="footer-bottom-links">
+          <a href="https://mytempmails.com/privacy-policy/" target="_blank" rel="noopener">Privacy Policy</a>
+          <span class="sep">•</span>
+          <a href="https://mytempmails.com/terms-and-conditions/" target="_blank" rel="noopener">Terms &amp; Conditions</a>
+          <span class="sep">•</span>
+          <a href="https://mytempmails.com/contact-us/" target="_blank" rel="noopener">Contact Support</a>
+        </div>
+      </div>
     </footer>
 
   </div>

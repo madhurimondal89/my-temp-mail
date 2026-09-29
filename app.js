@@ -1589,6 +1589,21 @@
         closeModal(elements.modalHistory);
       }
     });
+
+    // Header navigation dropdown click toggle
+    const btnHomeDropdown = document.getElementById('btn-home-dropdown');
+    const navHomeDropdown = document.getElementById('nav-home-dropdown');
+    if (btnHomeDropdown && navHomeDropdown) {
+      btnHomeDropdown.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navHomeDropdown.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!navHomeDropdown.contains(e.target)) {
+          navHomeDropdown.classList.remove('open');
+        }
+      });
+    }
   }
 
   // ==========================================================================
