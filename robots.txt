@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+# Googlebot & Bingbot specific directives
+User-agent: Googlebot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+User-agent: Bingbot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+Sitemap: https://tempmail.mytempmails.com/sitemap.xml
