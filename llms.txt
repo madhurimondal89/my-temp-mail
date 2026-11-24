@@ -1,0 +1,22 @@
+# MyTempMails
+
+> Free disposable temporary email service providing instant anonymous inboxes, real-time OTP receipt, and multi-provider auto-failover.
+
+## Core Features
+
+- [Temporary Mailbox](https://tempmail.mytempmails.com/): Instant disposable email generator with live auto-refresh inbox and 10-minute timer.
+- [Why Disposable Mail](https://tempmail.mytempmails.com/#why-temp-mail): Protection against phishing, commercial spam lists, and data brokers.
+- [Feature Comparison](https://tempmail.mytempmails.com/#comparison): Comparison matrix against traditional webmail and basic burner tools.
+- [FAQ](https://tempmail.mytempmails.com/#faq-section): Frequently asked questions on security, custom handles, and attachment support.
+
+## Supported Engines
+
+- Guerrilla Mail: Fast session-based disposable engine with zero registration overhead.
+- Temp-Mail.io: High-speed engine with fresh domains.
+- Mail.tm: Modern REST API with strict privacy controls.
+- Inboxes (GetNada): Multi-domain disposable inboxes.
+
+## Policies
+
+- [Privacy Policy](https://mytempmails.com/privacy-policy/): 100% anonymous, zero personal data logged or retained.
+- [Terms & Conditions](https://mytempmails.com/terms-and-conditions/): Usage rules and terms of service.

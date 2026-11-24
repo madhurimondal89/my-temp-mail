@@ -3,13 +3,39 @@ Allow: /
 Disallow: /proxy
 Disallow: /health
 
-# Googlebot & Bingbot specific directives
+# Search Engine Crawlers
 User-agent: Googlebot
 Allow: /
 Disallow: /proxy
 Disallow: /health
 
 User-agent: Bingbot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+# AI Search Engines & GEO Crawlers (OpenAI, Perplexity, Google Gemini, Anthropic, Apple)
+User-agent: GPTBot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /proxy
+Disallow: /health
+
+User-agent: Applebot-Extended
 Allow: /
 Disallow: /proxy
 Disallow: /health
