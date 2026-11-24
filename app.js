@@ -26,7 +26,7 @@
 
   // --- State Variables ---
   const state = {
-    provider: 'mailtm', // 'mailtm' | 'guerrilla' | 'tempmailio' | 'simulation'
+    provider: 'guerrilla', // 'guerrilla' | 'tempmailio' | 'mailtm' | 'simulation'
     email: '',
     domain: '',
     messages: [],
@@ -729,7 +729,7 @@
       </span>
     `;
 
-    const providerList = [targetProvider, 'mailtm', 'guerrilla', 'smails', 'temptf', 'tempmailio', 'inboxes', 'simulation'];
+    const providerList = [targetProvider, 'guerrilla', 'tempmailio', 'mailtm', 'inboxes', 'temptf', 'smails', 'simulation'];
     const uniqueProviders = [...new Set(providerList)];
 
     let success = false;
@@ -748,7 +748,11 @@
         elements.customDomainAddon.textContent = `@${res.domain}`;
 
         onMailboxReady();
-        showToast(`Inbox ready via ${currentProvider.name}: ${state.email}`, 'success');
+        if (provKey !== targetProvider) {
+          showToast(`${Providers[targetProvider].name} is temporarily busy. Switched to ${currentProvider.name}!`, 'info');
+        } else {
+          showToast(`Inbox ready via ${currentProvider.name}: ${state.email}`, 'success');
+        }
         saveActiveSession();
         saveInboxToHistory(state.email, currentProvider.name);
         success = true;
@@ -801,7 +805,7 @@
         return false;
       }
 
-      state.provider = data.provider || 'mailtm';
+      state.provider = data.provider || 'guerrilla';
       state.email = data.email;
       state.domain = data.domain;
       state.remainingSeconds = timeLeft;
@@ -822,7 +826,7 @@
   }
 
   function updateProviderBadge(provKey) {
-    const p = Providers[provKey] || Providers.mailtm;
+    const p = Providers[provKey] || Providers.guerrilla;
     if (elements.heroProviderBadge) {
       elements.heroProviderBadge.innerHTML = `<i class="ri-server-fill"></i> Engine: ${p.name}`;
     }
@@ -915,7 +919,7 @@
     }
 
     try {
-      const activeProvider = Providers[state.provider] || Providers.mailtm;
+      const activeProvider = Providers[state.provider] || Providers.guerrilla;
       const list = await activeProvider.fetchMessages();
 
       // Merge with existing messages so emails NEVER vanish on empty polling ticks!
@@ -1027,7 +1031,7 @@
 
     if (!fullMsg.html && !fullMsg.text) {
       try {
-        const activeProvider = Providers[state.provider] || Providers.mailtm;
+        const activeProvider = Providers[state.provider] || Providers.guerrilla;
         const detail = await activeProvider.fetchMessageDetail(messageId);
         fullMsg = { ...fullMsg, ...detail };
         const idx = state.messages.findIndex(m => m.id === messageId);
@@ -1152,7 +1156,7 @@
     const msgId = state.selectedMessage.id;
 
     try {
-      const activeProvider = Providers[state.provider] || Providers.mailtm;
+      const activeProvider = Providers[state.provider] || Providers.guerrilla;
       await activeProvider.deleteMessage(msgId);
     } catch (e) {
       console.warn('Delete error:', e);
