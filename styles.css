@@ -1188,7 +1188,8 @@ button, input, select, textarea { font: inherit; }
   padding: 0 var(--space-md);
 }
 
-.footer-top-grid {
+.footer-top-grid,
+.footer-grid {
   display: grid;
   grid-template-columns: 2fr repeat(3, 1fr);
   gap: var(--space-xl);
