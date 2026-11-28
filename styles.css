@@ -968,6 +968,10 @@ main {
   border-top: var(--rule-hair) solid var(--color-rule);
 }
 
+section[id] {
+  scroll-margin-top: 84px;
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
