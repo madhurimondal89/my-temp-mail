@@ -162,12 +162,18 @@ button, input, select, textarea { font: inherit; }
 
 /* Global App Container */
 .app-container {
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--space-md);
+  width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+}
+
+main {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+  flex: 1;
 }
 
 /* Header & Precision Navigation */
@@ -175,6 +181,7 @@ button, input, select, textarea { font: inherit; }
   position: sticky;
   top: 0;
   z-index: 300;
+  width: 100%;
   background-color: var(--color-paper);
   border-bottom: var(--rule-hair) solid var(--color-rule);
   padding: var(--space-sm) 0;
@@ -182,6 +189,10 @@ button, input, select, textarea { font: inherit; }
 }
 
 .header-content {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--space-md);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1176,6 +1187,7 @@ button, input, select, textarea { font: inherit; }
 
 /* Footer Section (Minimal Ink Footer) */
 .site-footer {
+  width: 100%;
   margin-top: auto;
   border-top: var(--rule-hair) solid var(--color-rule);
   background-color: var(--color-paper-2);
